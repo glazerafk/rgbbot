@@ -1,23 +1,20 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 
-// cria o bot
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
-// ID DO CARGO QUE VAI MUDAR DE COR
+// ID do cargo que vai mudar de cor
 const ROLE_ID = "1495189865686499328";
 
-// função de cor aleatória
 function randomColor() {
   return Math.floor(Math.random() * 16777215);
 }
 
-// quando o bot ligar
 client.once("ready", () => {
   console.log(`Bot online como ${client.user.tag}`);
 
-  // LOOP A CADA 10 SEGUNDOS
+  // LOOP A CADA 60 SEGUNDOS (ESTÁVEL)
   setInterval(async () => {
     try {
       client.guilds.cache.forEach(async (guild) => {
@@ -26,13 +23,14 @@ client.once("ready", () => {
 
         const color = randomColor();
 
-        await role.setColor(color).catch(() => {});
+        await role.setColor(color).catch((err) => {
+          console.log("Erro ao mudar cor:", err.message);
+        });
       });
     } catch (err) {
-      console.log("Erro no loop:", err);
+      console.log("Erro geral no loop:", err);
     }
-  }, 10000); // 10 segundos
+  }, 60000);
 });
 
-// login do bot
 client.login(process.env.DISCORD_TOKEN);
